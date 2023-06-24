@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func main() {
@@ -44,7 +45,14 @@ func temporary(w http.ResponseWriter, req *http.Request) {
 }
 
 func hey(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("hey's method :", req.Method)
+	bs, _ := io.ReadAll(req.Body)
 
-	io.WriteString(w, req.Method)
+	var sb strings.Builder
+	sb.WriteString("method : " + req.Method)
+	if len(bs) > 0 {
+		sb.WriteString("\r\nbody : ")
+		sb.Write(bs)
+	}
+
+	io.WriteString(w, sb.String())
 }
